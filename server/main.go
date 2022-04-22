@@ -1,14 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net"
 
-	"google.golang.org/grpc"
 	pb "github.com/lucassauro/klever-challenge/proto"
+	"google.golang.org/grpc"
 )
 
-var address string = "50051"
+var address string = ":50051"
 
 type Server struct {
 	pb.CryptoServiceServer
@@ -17,14 +17,14 @@ type Server struct {
 func main() {
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
-		fmt.Println("Error: %w", err)
+		log.Fatalf("Error: %v", err)
+		return 
 	}
-
-	fmt.Println("Listening on port: %w" , address)
+	log.Println("Listening on port", address)
 
 	serverInstace := grpc.NewServer()
 	if err := serverInstace.Serve(listener); err != nil {
-		fmt.Println("Error: %w", err)
+		log.Fatalf("Error: %v", err)
 	}
 	pb.RegisterCryptoServiceServer(serverInstace, &Server{})
 }
