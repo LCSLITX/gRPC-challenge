@@ -28,6 +28,5 @@ func FindLastId() int64 {
 	if err := lastId.Decode(data); err != nil {
 		status.Errorf(codes.Internal, fmt.Sprintf("Internal error: %v", err))
 	}
-	log.Println(data.Id)
 	return int64(data.Id)
 }
