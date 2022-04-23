@@ -11,7 +11,7 @@ import (
 )
 
 func (s *Server) CreateCrypto(ctx context.Context, req *pb.NewCrypto) (*pb.CryptoId, error) {	
-	quant := uint32(QuantityOfCryptos() + 1)
+	quant := uint32(findLastId() + 1)
 	
 	newCoin := &Coin {
 		Id: quant,
