@@ -33,7 +33,7 @@ service CryptoService {
 
   rpc ReadCrypto(CryptoId) returns (Crypto);
   
-  rpc UpdateCrypto(CryptoId) returns (Crypto);
+  rpc UpdateCrypto(Crypto) returns (CryptoId);
   
   rpc DeleteCrypto(CryptoId) returns (google.protobuf.Empty); 
   

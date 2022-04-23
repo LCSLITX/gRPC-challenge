@@ -25,7 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CryptoServiceClient interface {
 	CreateCrypto(ctx context.Context, in *NewCrypto, opts ...grpc.CallOption) (*CryptoId, error)
 	ReadCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*Crypto, error)
-	UpdateCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*Crypto, error)
+	UpdateCrypto(ctx context.Context, in *Crypto, opts ...grpc.CallOption) (*CryptoId, error)
 	DeleteCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*empty.Empty, error)
 	ListCryptos(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (CryptoService_ListCryptosClient, error)
 	UpvoteCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -59,8 +59,8 @@ func (c *cryptoServiceClient) ReadCrypto(ctx context.Context, in *CryptoId, opts
 	return out, nil
 }
 
-func (c *cryptoServiceClient) UpdateCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*Crypto, error) {
-	out := new(Crypto)
+func (c *cryptoServiceClient) UpdateCrypto(ctx context.Context, in *Crypto, opts ...grpc.CallOption) (*CryptoId, error) {
+	out := new(CryptoId)
 	err := c.cc.Invoke(ctx, "/crypto.CryptoService/UpdateCrypto", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -165,7 +165,7 @@ func (x *cryptoServiceLiveCryptoVotesClient) Recv() (*CryptoVotes, error) {
 type CryptoServiceServer interface {
 	CreateCrypto(context.Context, *NewCrypto) (*CryptoId, error)
 	ReadCrypto(context.Context, *CryptoId) (*Crypto, error)
-	UpdateCrypto(context.Context, *CryptoId) (*Crypto, error)
+	UpdateCrypto(context.Context, *Crypto) (*CryptoId, error)
 	DeleteCrypto(context.Context, *CryptoId) (*empty.Empty, error)
 	ListCryptos(*empty.Empty, CryptoService_ListCryptosServer) error
 	UpvoteCrypto(context.Context, *CryptoId) (*empty.Empty, error)
@@ -184,7 +184,7 @@ func (UnimplementedCryptoServiceServer) CreateCrypto(context.Context, *NewCrypto
 func (UnimplementedCryptoServiceServer) ReadCrypto(context.Context, *CryptoId) (*Crypto, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadCrypto not implemented")
 }
-func (UnimplementedCryptoServiceServer) UpdateCrypto(context.Context, *CryptoId) (*Crypto, error) {
+func (UnimplementedCryptoServiceServer) UpdateCrypto(context.Context, *Crypto) (*CryptoId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCrypto not implemented")
 }
 func (UnimplementedCryptoServiceServer) DeleteCrypto(context.Context, *CryptoId) (*empty.Empty, error) {
@@ -252,7 +252,7 @@ func _CryptoService_ReadCrypto_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _CryptoService_UpdateCrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CryptoId)
+	in := new(Crypto)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -264,7 +264,7 @@ func _CryptoService_UpdateCrypto_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/crypto.CryptoService/UpdateCrypto",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CryptoServiceServer).UpdateCrypto(ctx, req.(*CryptoId))
+		return srv.(CryptoServiceServer).UpdateCrypto(ctx, req.(*Crypto))
 	}
 	return interceptor(ctx, in, info, handler)
 }
