@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,7 +18,7 @@ import (
 // 	return count
 // }
 
-func FindLastId() int64 {
+func FindLastId() uint32 {
 	opts := options.FindOne()
 	opts.SetSort(bson.D{{Key: "_id", Value: -1}})
 	filter := bson.D{}
@@ -28,5 +27,5 @@ func FindLastId() int64 {
 	if err := lastId.Decode(data); err != nil {
 		status.Errorf(codes.Internal, fmt.Sprintf("Internal error: %v", err))
 	}
-	return int64(data.Id)
+	return uint32(data.Id)
 }
