@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package crypto;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/lucassauro/klever-challenge/proto";
+
+message Crypto {
+  uint32 id = 1;
+  string name = 2;
+  string short = 3;
+  int64 votes = 4; // allow negative number
+
+}
+
+message newCrypto {
+  string name = 1;
+  string short = 2;
+}
+
+message CryptoId {
+  uint32 id = 1;
+}
+
+message CryptoVotes {
+  int64 votes = 1;
+}
+
+service CryptoService {
+  rpc CreateCrypto(newCrypto) returns (CryptoId);
+
+  rpc ReadCrypto(CryptoId) returns (Crypto);
+  
+  rpc UpdateCrypto(CryptoId) returns (Crypto);
+  
+  rpc DeleteCrypto(CryptoId) returns (google.protobuf.Empty); 
+  
+  rpc ListCryptos(google.protobuf.Empty) returns (stream Crypto);
+  
+  rpc UpvoteCrypto(CryptoId) returns (google.protobuf.Empty);
+  
+  rpc DownvoteCrypto(CryptoId) returns (google.protobuf.Empty);
+  
+  rpc LiveCryptoVotes(CryptoId) returns (stream CryptoVotes);
+}
