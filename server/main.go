@@ -3,8 +3,11 @@ package main
 import (
 	"log"
 	"net"
+	"fmt"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/lucassauro/klever-challenge/proto"
 )
@@ -18,7 +21,7 @@ func main() {
 	listener, err := net.Listen("tcp", address)
 	
 	if err != nil {
-		log.Fatalf("Error: %v", err)
+		status.Errorf(codes.Internal, fmt.Sprintf("Internal error: %v", err))
 	}
 
 	log.Println("Listening on port", address)
@@ -28,6 +31,6 @@ func main() {
 	pb.RegisterCryptoServiceServer(serverInstance, &Server{})
 	
 	if err := serverInstance.Serve(listener); err != nil {
-		log.Fatalf("Error: %v", err)
+		status.Errorf(codes.Internal, fmt.Sprintf("Internal error: %v", err))
 	}
 }
