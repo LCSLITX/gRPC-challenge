@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 	"net"
+
 	"google.golang.org/grpc"
+
 	pb "github.com/lucassauro/klever-challenge/proto"
 )
 
@@ -14,9 +16,11 @@ type Server struct {
 
 func main() {
 	listener, err := net.Listen("tcp", address)
+	
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
+
 	log.Println("Listening on port", address)
 
 	serverInstance := grpc.NewServer()
