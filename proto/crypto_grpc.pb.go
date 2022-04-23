@@ -23,11 +23,14 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CryptoServiceClient interface {
-	CreateCrypto(ctx context.Context, in *Crypto, opts ...grpc.CallOption) (*CryptoId, error)
+	CreateCrypto(ctx context.Context, in *NewCrypto, opts ...grpc.CallOption) (*CryptoId, error)
 	ReadCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*Crypto, error)
 	UpdateCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*Crypto, error)
 	DeleteCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*empty.Empty, error)
 	ListCryptos(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (CryptoService_ListCryptosClient, error)
+	UpvoteCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*empty.Empty, error)
+	DownvoteCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*empty.Empty, error)
+	LiveCryptoVotes(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (CryptoService_LiveCryptoVotesClient, error)
 }
 
 type cryptoServiceClient struct {
@@ -38,7 +41,7 @@ func NewCryptoServiceClient(cc grpc.ClientConnInterface) CryptoServiceClient {
 	return &cryptoServiceClient{cc}
 }
 
-func (c *cryptoServiceClient) CreateCrypto(ctx context.Context, in *Crypto, opts ...grpc.CallOption) (*CryptoId, error) {
+func (c *cryptoServiceClient) CreateCrypto(ctx context.Context, in *NewCrypto, opts ...grpc.CallOption) (*CryptoId, error) {
 	out := new(CryptoId)
 	err := c.cc.Invoke(ctx, "/crypto.CryptoService/CreateCrypto", in, out, opts...)
 	if err != nil {
@@ -106,15 +109,68 @@ func (x *cryptoServiceListCryptosClient) Recv() (*Crypto, error) {
 	return m, nil
 }
 
+func (c *cryptoServiceClient) UpvoteCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/crypto.CryptoService/UpvoteCrypto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoServiceClient) DownvoteCrypto(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/crypto.CryptoService/DownvoteCrypto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoServiceClient) LiveCryptoVotes(ctx context.Context, in *CryptoId, opts ...grpc.CallOption) (CryptoService_LiveCryptoVotesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CryptoService_ServiceDesc.Streams[1], "/crypto.CryptoService/LiveCryptoVotes", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &cryptoServiceLiveCryptoVotesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type CryptoService_LiveCryptoVotesClient interface {
+	Recv() (*CryptoVotes, error)
+	grpc.ClientStream
+}
+
+type cryptoServiceLiveCryptoVotesClient struct {
+	grpc.ClientStream
+}
+
+func (x *cryptoServiceLiveCryptoVotesClient) Recv() (*CryptoVotes, error) {
+	m := new(CryptoVotes)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // CryptoServiceServer is the server API for CryptoService service.
 // All implementations must embed UnimplementedCryptoServiceServer
 // for forward compatibility
 type CryptoServiceServer interface {
-	CreateCrypto(context.Context, *Crypto) (*CryptoId, error)
+	CreateCrypto(context.Context, *NewCrypto) (*CryptoId, error)
 	ReadCrypto(context.Context, *CryptoId) (*Crypto, error)
 	UpdateCrypto(context.Context, *CryptoId) (*Crypto, error)
 	DeleteCrypto(context.Context, *CryptoId) (*empty.Empty, error)
 	ListCryptos(*empty.Empty, CryptoService_ListCryptosServer) error
+	UpvoteCrypto(context.Context, *CryptoId) (*empty.Empty, error)
+	DownvoteCrypto(context.Context, *CryptoId) (*empty.Empty, error)
+	LiveCryptoVotes(*CryptoId, CryptoService_LiveCryptoVotesServer) error
 	mustEmbedUnimplementedCryptoServiceServer()
 }
 
@@ -122,7 +178,7 @@ type CryptoServiceServer interface {
 type UnimplementedCryptoServiceServer struct {
 }
 
-func (UnimplementedCryptoServiceServer) CreateCrypto(context.Context, *Crypto) (*CryptoId, error) {
+func (UnimplementedCryptoServiceServer) CreateCrypto(context.Context, *NewCrypto) (*CryptoId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCrypto not implemented")
 }
 func (UnimplementedCryptoServiceServer) ReadCrypto(context.Context, *CryptoId) (*Crypto, error) {
@@ -136,6 +192,15 @@ func (UnimplementedCryptoServiceServer) DeleteCrypto(context.Context, *CryptoId)
 }
 func (UnimplementedCryptoServiceServer) ListCryptos(*empty.Empty, CryptoService_ListCryptosServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListCryptos not implemented")
+}
+func (UnimplementedCryptoServiceServer) UpvoteCrypto(context.Context, *CryptoId) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpvoteCrypto not implemented")
+}
+func (UnimplementedCryptoServiceServer) DownvoteCrypto(context.Context, *CryptoId) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownvoteCrypto not implemented")
+}
+func (UnimplementedCryptoServiceServer) LiveCryptoVotes(*CryptoId, CryptoService_LiveCryptoVotesServer) error {
+	return status.Errorf(codes.Unimplemented, "method LiveCryptoVotes not implemented")
 }
 func (UnimplementedCryptoServiceServer) mustEmbedUnimplementedCryptoServiceServer() {}
 
@@ -151,7 +216,7 @@ func RegisterCryptoServiceServer(s grpc.ServiceRegistrar, srv CryptoServiceServe
 }
 
 func _CryptoService_CreateCrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Crypto)
+	in := new(NewCrypto)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -163,7 +228,7 @@ func _CryptoService_CreateCrypto_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/crypto.CryptoService/CreateCrypto",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CryptoServiceServer).CreateCrypto(ctx, req.(*Crypto))
+		return srv.(CryptoServiceServer).CreateCrypto(ctx, req.(*NewCrypto))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -243,6 +308,63 @@ func (x *cryptoServiceListCryptosServer) Send(m *Crypto) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _CryptoService_UpvoteCrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CryptoId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoServiceServer).UpvoteCrypto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crypto.CryptoService/UpvoteCrypto",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoServiceServer).UpvoteCrypto(ctx, req.(*CryptoId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CryptoService_DownvoteCrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CryptoId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoServiceServer).DownvoteCrypto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crypto.CryptoService/DownvoteCrypto",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoServiceServer).DownvoteCrypto(ctx, req.(*CryptoId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CryptoService_LiveCryptoVotes_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(CryptoId)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(CryptoServiceServer).LiveCryptoVotes(m, &cryptoServiceLiveCryptoVotesServer{stream})
+}
+
+type CryptoService_LiveCryptoVotesServer interface {
+	Send(*CryptoVotes) error
+	grpc.ServerStream
+}
+
+type cryptoServiceLiveCryptoVotesServer struct {
+	grpc.ServerStream
+}
+
+func (x *cryptoServiceLiveCryptoVotesServer) Send(m *CryptoVotes) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // CryptoService_ServiceDesc is the grpc.ServiceDesc for CryptoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,11 +388,24 @@ var CryptoService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteCrypto",
 			Handler:    _CryptoService_DeleteCrypto_Handler,
 		},
+		{
+			MethodName: "UpvoteCrypto",
+			Handler:    _CryptoService_UpvoteCrypto_Handler,
+		},
+		{
+			MethodName: "DownvoteCrypto",
+			Handler:    _CryptoService_DownvoteCrypto_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "ListCryptos",
 			Handler:       _CryptoService_ListCryptos_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "LiveCryptoVotes",
+			Handler:       _CryptoService_LiveCryptoVotes_Handler,
 			ServerStreams: true,
 		},
 	},
