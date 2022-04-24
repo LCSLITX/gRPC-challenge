@@ -51,22 +51,22 @@ func FindLastId() uint32 {
 	return uint32(data.Id)
 }
 
-// FrankensteinGetVotesPls function receives a parameter of type bson.M, returned by mongo.Watch(), and iterates over it until it get number of votes to return.
+// FrankensteinGetVotesPls function receives a parameter of type bson.M, returned by mongo.Watch(), and iterates over it until it get number of votes to return it.
 // know more: https://stackoverflow.com/questions/61354850/how-to-assert-a-primitive-m-to-a-mapstringstring
 func FrankensteinGetVotesPls(data bson.M) int64 {
 	a := make(map[string]interface{})
 	for key, value := range data["updateDescription"].(primitive.M) {
 		if key == "updatedFields" {
-			a["a"] = value
+			a["1"] = value
 		}
 	}
 	for key, value := range a["1"].(primitive.M) {
 		if key == "votes" {
-			a["a"] = value
+			a["1"] = value
 		}
 	}
 	// type assertion
-	t := a["a"].(int64)
+	t := a["1"].(int64)
 
 	return t
 }
