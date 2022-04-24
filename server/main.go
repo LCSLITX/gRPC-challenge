@@ -21,7 +21,7 @@ func main() {
 	listener, err := net.Listen("tcp", address)
 	
 	if err != nil {
-		status.Errorf(codes.Internal, fmt.Sprintf("Internal error: %v", err))
+		status.Errorf(codes.Internal, fmt.Sprintln(err))
 	}
 
 	log.Println("Listening on port", address)
@@ -31,6 +31,6 @@ func main() {
 	pb.RegisterCryptoServiceServer(serverInstance, &Server{})
 	
 	if err := serverInstance.Serve(listener); err != nil {
-		status.Errorf(codes.Internal, fmt.Sprintf("Internal error: %v", err))
+		status.Errorf(codes.Internal, fmt.Sprintln(err))
 	}
 }

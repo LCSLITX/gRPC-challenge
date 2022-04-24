@@ -16,7 +16,7 @@ import (
 func (s *Server) ListCryptos(no *empty.Empty, stream pb.CryptoService_ListCryptosServer) error {
 	res, err := MongoCollection.Find(context.Background(), bson.D{})
 	if err != nil {
-		status.Errorf(codes.Internal, fmt.Sprintf("Error. %v", err))
+		status.Errorf(codes.Internal, fmt.Sprintln(err))
 	}
 
 	defer res.Close(context.Background())
@@ -26,7 +26,7 @@ func (s *Server) ListCryptos(no *empty.Empty, stream pb.CryptoService_ListCrypto
 	for res.Next(context.Background()) {
 		err := res.Decode(coin)
 		if err != nil {
-			status.Errorf(codes.Internal, fmt.Sprintf("Error. %v", err))
+			status.Errorf(codes.Internal, fmt.Sprintln(err))
 		}
 		stream.Send(&pb.Crypto{
 			Id: coin.Id,
@@ -37,7 +37,7 @@ func (s *Server) ListCryptos(no *empty.Empty, stream pb.CryptoService_ListCrypto
 	}
 
 	if err := res.Err(); err != nil {
-		status.Errorf(codes.Internal, fmt.Sprintf("Error. %v", err))
+		status.Errorf(codes.Internal, fmt.Sprintln(err))
 	}
 
 	return nil

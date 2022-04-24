@@ -13,12 +13,12 @@ func init() {
 	mclient, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("CLOUD_CONNECTION_STRING")))
 	
 	if err != nil {
-		log.Fatalf("Error: %v", err)
+		log.Fatalln(err)
 	}
 	
 	err = mclient.Connect(context.Background())
 	if err != nil {
-		log.Fatalf("Error: %v", err)
+		log.Fatalln(err)
 	}
 	
 	MongoCollection = mclient.Database("cryptodb").Collection("crypto")

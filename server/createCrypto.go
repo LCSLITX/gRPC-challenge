@@ -17,7 +17,7 @@ func (s *Server) CreateCrypto(ctx context.Context, req *pb.NewCrypto) (*pb.Crypt
 	lastId, Err := FindLastId()
 
 	if Err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintln(Err))
+		return nil, status.Errorf(codes.Internal, fmt.Sprintln(Err))
 	}
 
 	// Following variable stores the Id of the last inserted document plus one.
@@ -29,16 +29,16 @@ func (s *Server) CreateCrypto(ctx context.Context, req *pb.NewCrypto) (*pb.Crypt
 		Short: req.Short,
 		Votes: 0,
 	}
-	
+
 	// validate existance of both name and short 
 	validate = validator.New()
-
+	
 	validationErr := validate.Struct(newCoin)
 	
 	if validationErr != nil {
 		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintln(validationErr))
 	}
-
+	
 	_, err := MongoCollection.InsertOne(ctx, newCoin)
 
 	if err != nil {

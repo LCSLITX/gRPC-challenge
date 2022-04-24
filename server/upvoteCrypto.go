@@ -27,7 +27,7 @@ func (s *Server) UpvoteCrypto(ctx context.Context, req *pb.CryptoId) (*pb.Crypto
 	coin := &Coin{}
 
 	if err := res.Decode(coin); err != nil {
-		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("No coin with specified Id. %v", err))
+		return nil, status.Errorf(codes.NotFound, fmt.Sprintln(err))
 	}
 
 	return &pb.CryptoVotes{

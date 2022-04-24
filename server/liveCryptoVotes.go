@@ -22,7 +22,7 @@ func (s *Server) LiveCryptoVotes(req *pb.CryptoId, stream pb.CryptoService_LiveC
 	watch, err := MongoCollection.Watch(context.TODO(), mongo.Pipeline{match})
 	
 	if err != nil {
-		status.Errorf(codes.NotFound, fmt.Sprintf("No coin with specified Id. %v", err))
+		status.Errorf(codes.NotFound, fmt.Sprintln(err))
 	}
 	
 	defer watch.Close(context.Background())	
@@ -31,7 +31,7 @@ func (s *Server) LiveCryptoVotes(req *pb.CryptoId, stream pb.CryptoService_LiveC
 		var data bson.M
 
 		if err := watch.Decode(&data); err != nil {
-			status.Errorf(codes.Internal, fmt.Sprintf("Streaming error %v", err))	
+			status.Errorf(codes.Internal, fmt.Sprintln(err))	
 		}
 		
 		votesNumber := FrankensteinGetVotesPls(data)

@@ -14,7 +14,7 @@ func (s *Server) ReadCrypto(ctx context.Context, req *pb.CryptoId) (*pb.Crypto, 
 	coin, err := DoesThisCryptoExist(req.Id)
 
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintln(err))
+		return nil, status.Errorf(codes.NotFound, fmt.Sprintln(err))
 	}
 	
 	return &pb.Crypto{
