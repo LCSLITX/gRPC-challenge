@@ -12,6 +12,7 @@ import (
 	pb "github.com/lucassauro/klever-challenge/proto"
 )
 
+// UpdateCrypto function receives a context and request with Crypto struct as parameters, update the coin in the database and returns its id and error.
 func (s *Server) UpdateCrypto(ctx context.Context, req *pb.Crypto) (*pb.CryptoId, error) {
 	id := bson.M{"_id": req.Id}
 
