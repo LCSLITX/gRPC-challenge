@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"log"
 	"context"
 
@@ -9,7 +10,7 @@ import (
 )
 
 func init() {
-	mclient, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:root@localhost:27017/"))
+	mclient, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("CLOUD_CONNECTION_STRING")))
 	
 	if err != nil {
 		log.Fatalf("Error: %v", err)
