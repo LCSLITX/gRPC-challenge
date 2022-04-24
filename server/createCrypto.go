@@ -10,11 +10,13 @@ import (
 	pb "github.com/lucassauro/klever-challenge/proto"
 )
 
-func (s *Server) CreateCrypto(ctx context.Context, req *pb.NewCrypto) (*pb.CryptoId, error) {	
-	quant := uint32(FindLastId() + 1)
+// CreateCrypto receives context and request with NewCrypto struct as parameters, create a coin in the database and return its auto incremented integer Id.
+func (s *Server) CreateCrypto(ctx context.Context, req *pb.NewCrypto) (*pb.CryptoId, error) {
+	// Following variable stores the Id of the last inserted document plus one.
+	coinId := uint32(FindLastId() + 1)
 	
 	newCoin := &Coin {
-		Id: quant,
+		Id: coinId,
 		Name: req.Name,
 		Short: req.Short,
 		Votes: 0,
@@ -27,6 +29,6 @@ func (s *Server) CreateCrypto(ctx context.Context, req *pb.NewCrypto) (*pb.Crypt
 	}
 
 	return &pb.CryptoId{
-		Id: quant,
+		Id: coinId,
 	}, nil
 }
