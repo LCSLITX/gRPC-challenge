@@ -1,26 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"context"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"go.mongodb.org/mongo-driver/bson"
 
 	pb "github.com/lucassauro/klever-challenge/proto"
 )
 
+// ReadCrypto function receives context and request with id as parameters, return a crypto if it exists and an error.
 func (s *Server) ReadCrypto(ctx context.Context, req *pb.CryptoId) (*pb.Crypto, error) {
-	id := bson.M{"_id": req.Id}
-
-	res := MongoCollection.FindOne(ctx, id)
-
-	coin := &Coin{}
-
-	if err := res.Decode(coin); err != nil {
-		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("No coin with specified Id. %v", err))
-	}
+	
+	coin := DoesThisCryptoExist(req.Id)
 
 	return &pb.Crypto{
 		Id: coin.Id,
