@@ -12,6 +12,8 @@ import (
 	pb "github.com/lucassauro/klever-challenge/proto"
 )
 
+
+// DeleteCrypto function receives context and request with crypto id. Returns empty if it successful deletes a crypto and error.
 func (s *Server) DeleteCrypto(ctx context.Context, req *pb.CryptoId) (*empty.Empty, error) {
 	id := bson.M{"_id": req.Id}
 
