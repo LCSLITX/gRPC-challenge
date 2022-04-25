@@ -9,5 +9,6 @@ bserver:
 bclient:
 	go build -o ./bin/ ./src/client && ./bin/client
 
-test:
+# tests
+tests:
 	go test -v -cover -coverprofile=c.out && go tool cover -html=c.out -o coverage.html
