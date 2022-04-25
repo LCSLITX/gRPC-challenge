@@ -15,39 +15,6 @@ import (
 	pb "github.com/lucassauro/klever-challenge/src/proto"
 )
 
-// type testUtilities[T any] struct {
-// 	ctx emptyCtx;
-// 	credentials []T;
-// 	connection []T;
-// 	client []T;
-// 	mt []T;
-// }
-
-// var utilities = make(&testUtilities{})
-
-// func testUtils(t *testing.T) {
-// 	ctx := context.Background()
-// 	credentials := grpc.WithTransportCredentials(insecure.NewCredentials())
-// 	connection, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(bufDialer), credentials)
-// 	// https://stackoverflow.com/questions/42102496/testing-a-grpc-service
-
-// 	if err != nil {
-// 	t.Fatalf("Error: %v", err)
-// 	}
-
-// 	client := pb.NewCryptoServiceClient(connection)
-
-// 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
-
-// 	return &testUtilities{
-// 		ctx,
-// 		credentials,
-// 		connection,
-// 		client,
-// 		mt,
-// 	}
-// }
-
 func TestCreateCrypto(t *testing.T) {
 	ctx := context.Background()
 	credentials := grpc.WithTransportCredentials(insecure.NewCredentials())
@@ -80,8 +47,6 @@ func TestCreateCrypto(t *testing.T) {
 	})
 }
 
-// TestErrorCreateCrypto tests if the function CreateCrypto works properly.
-// https://stackoverflow.com/questions/42102496/testing-a-grpc-service
 func TestErrorCreateCrypto(t *testing.T) {
 	ctx := context.Background()
 	credentials := grpc.WithTransportCredentials(insecure.NewCredentials())
@@ -103,7 +68,7 @@ func TestErrorCreateCrypto(t *testing.T) {
 		mt.AddMockResponses(bson.D { primitive.E { Key: "error", Value: 0 } })
 
 		_, err := client.CreateCrypto(ctx, &pb.NewCrypto{})
-		
+
 		if err == nil {
 			t.Errorf("Error expected")
 		}
