@@ -1,6 +1,6 @@
 package main
 
-import(
+import (
 	"fmt"
 	"context"
 
@@ -10,10 +10,9 @@ import(
 
 	"github.com/golang/protobuf/ptypes/empty"
 	pb "github.com/lucassauro/klever-challenge/src/proto"
-
 )
 
-// DeleteCrypto function receives context and request with crypto id. 
+// DeleteCrypto function receives context and request with crypto id.
 // Returns empty in case of success, error in case of failure.
 func (s *Server) DeleteCrypto(ctx context.Context, req *pb.CryptoId) (*empty.Empty, error) {
 	id := bson.M{"_id": req.Id}
@@ -21,7 +20,7 @@ func (s *Server) DeleteCrypto(ctx context.Context, req *pb.CryptoId) (*empty.Emp
 	res, err := MongoCollection.DeleteOne(ctx, id)
 
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, fmt.Sprintln(err))
+		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintln(err))
 	} else if res.DeletedCount == 0 {
 		return nil, status.Errorf(codes.NotFound, fmt.Sprintln("DeletedCount", res.DeletedCount))
 	}

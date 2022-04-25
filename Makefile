@@ -3,7 +3,11 @@ crypto:
 
 # build server
 bserver:
-	go build -o ./bin/ ./server && ./bin/server
+	go build -o ./bin/ ./src/server && ./bin/server
+	
 # build client
 bclient:
-	go build -o ./bin/ ./client && ./bin/client
+	go build -o ./bin/ ./src/client && ./bin/client
+
+test:
+	go test -v -cover -coverprofile=c.out && go tool cover -html=c.out -o coverage.html

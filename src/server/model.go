@@ -9,8 +9,16 @@ import(
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func getEnv(key, standard string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = standard
+	}
+	return value
+}
+
 func init() {
-	mclient, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("CLOUD_CONNECTION_STRING")))
+	mclient, err := mongo.NewClient(options.Client().ApplyURI(getEnv("CLOUD_CONNECTION_STRING", "mongodb://root:root@localhost:27017/")))
 	
 	if err != nil {
 		log.Fatalln(err)

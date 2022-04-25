@@ -1,0 +1,685 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>server: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/lucassauro/klever-challenge/src/server/auxiliary.go (57.1%)</option>
+				
+				<option value="file1">github.com/lucassauro/klever-challenge/src/server/createCrypto.go (81.8%)</option>
+				
+				<option value="file2">github.com/lucassauro/klever-challenge/src/server/deleteCrypto.go (71.4%)</option>
+				
+				<option value="file3">github.com/lucassauro/klever-challenge/src/server/downvoteCrypto.go (83.3%)</option>
+				
+				<option value="file4">github.com/lucassauro/klever-challenge/src/server/listCryptos.go (76.9%)</option>
+				
+				<option value="file5">github.com/lucassauro/klever-challenge/src/server/liveCryptoVotes.go (0.0%)</option>
+				
+				<option value="file6">github.com/lucassauro/klever-challenge/src/server/main.go (0.0%)</option>
+				
+				<option value="file7">github.com/lucassauro/klever-challenge/src/server/model.go (75.0%)</option>
+				
+				<option value="file8">github.com/lucassauro/klever-challenge/src/server/readCrypto.go (75.0%)</option>
+				
+				<option value="file9">github.com/lucassauro/klever-challenge/src/server/updateCrypto.go (77.8%)</option>
+				
+				<option value="file10">github.com/lucassauro/klever-challenge/src/server/upvoteCrypto.go (83.3%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "context"
+        "errors"
+        "fmt"
+        "log"
+
+        "github.com/subosito/gotenv"
+
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+        "go.mongodb.org/mongo-driver/mongo"
+        "go.mongodb.org/mongo-driver/mongo/options"
+
+        "github.com/go-playground/validator/v10"
+
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+// MongoCollection incialization.
+var MongoCollection *mongo.Collection
+
+// Validate inicialization.
+var Validate *validator.Validate
+
+// gotenv inicialization.
+func init() <span class="cov8" title="1">{
+        if err := gotenv.Load(); err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+        }</span>
+}
+
+// ===== Structs =====.
+type Coin struct {
+        ID                                         uint32                        `bson:"_id,omitempty" json:"id,omitempty" validate:"numeric"`
+        Name                                 string                         `bson:"name,omitempty" json:"name,omitempty" validate:"required,alpha"`
+        Short                         string                         `bson:"short,omitempty" json:"short,omitempty" validate:"required,alphanum"`
+        Votes                         int64                         `bson:"votes,omitempty" json:"votes,omitempty" validate:"numeric"`
+}
+
+type Votes struct {
+        Votes                         int64                         `bson:"votes" json:"votes"`
+}
+
+// ===== Helper functions =====.
+
+// FindLastId function finds the Id of the last added document in a mongo collection.
+func FindLastID() (uint32, error) <span class="cov8" title="1">{
+        opts := options.FindOne()
+
+        opts.SetSort( bson.D { { Key: "_id", Value: -1 } } )
+
+        filter := bson.D{}
+
+        lastID := MongoCollection.FindOne(context.Background(), filter, opts)
+
+        data := &amp;Coin{}
+
+        if err := lastID.Decode(data); errors.Is(err, mongo.ErrNoDocuments) </span><span class="cov0" title="0">{
+                return 0, nil
+        }</span> else<span class="cov8" title="1"> if err != nil </span><span class="cov0" title="0">{
+                return 0, status.Errorf(codes.Internal, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov8" title="1">return data.ID, nil</span>
+}
+
+// FrankensteinGetVotesPls function receives a parameter of type bson.M, returned by mongo.Watch(),
+// and iterates over it until it get number of votes to return it.
+// know more: https://stackoverflow.com/questions/61354850/how-to-assert-a-primitive-m-to-a-mapstringstring.
+func FrankensteinGetVotesPls(data bson.M) int64 <span class="cov0" title="0">{
+        mapa := make(map[string]interface{})
+        
+        for key, value := range data["updateDescription"].(primitive.M) </span><span class="cov0" title="0">{
+                if key == "updatedFields" </span><span class="cov0" title="0">{
+                        mapa["a"] = value
+                }</span>
+        }
+        
+        <span class="cov0" title="0">for key, value := range mapa["a"].(primitive.M) </span><span class="cov0" title="0">{
+                if key == "votes" </span><span class="cov0" title="0">{
+                        mapa["a"] = value
+                }</span>
+        }
+
+        // type assertion.
+        // t := mapa["a"].(int64)
+        <span class="cov0" title="0">t := mapa["a"].(int32)
+        // interface conversion problem. Know more: 
+        // https://stackoverflow.com/questions/70705673/panic-interface-conversion-interface-is-float64-not-int64
+
+        return int64(t)</span>
+}
+
+// DoesThisCryptoExist function receives parameter of type *pb.CryptoId,
+// search mongo collection for it and return info Coin struct.
+func DoesThisCryptoExist(id uint32) (*Coin, error) <span class="cov8" title="1">{
+        filter := bson.M{"_id": id}
+        
+        res := MongoCollection.FindOne(context.Background(), filter)
+        
+        if res.Err() != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.NotFound, fmt.Sprintln(res.Err()))
+        }</span>
+
+        <span class="cov8" title="1">coin := &amp;Coin{}
+
+        if err := res.Decode(coin); err != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.NotFound, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov8" title="1">return coin, nil</span>
+}
+
+// ValidateCoin function receives a pb.Crypto as parameter and executes validator
+// to check whether the coin is valid or not. Return error only. 
+func ValidateCoin(coin *pb.Crypto) error <span class="cov8" title="1">{
+        isCoinValid := &amp;Coin {
+                ID: coin.Id,
+                Name: coin.Name,
+                Short: coin.Short,
+                Votes: coin.Votes,
+        }
+
+        // validate existence of both name and short 
+        Validate = validator.New()
+
+        validationErr := Validate.Struct(isCoinValid)
+        
+        if validationErr != nil </span><span class="cov0" title="0">{
+                return status.Error(codes.InvalidArgument, fmt.Sprintln(validationErr))
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+
+
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import(
+        "fmt"
+        "context"
+
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+
+        "github.com/go-playground/validator/v10"
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+// CreateCrypto receives context and request with NewCrypto struct as parameters, 
+// create a coin in the database and return its auto incremented integer Id.
+func (s *Server) CreateCrypto(ctx context.Context, req *pb.NewCrypto) (*pb.CryptoId, error) <span class="cov8" title="1">{
+        lastID, Err := FindLastID()
+
+        if Err != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.Internal, fmt.Sprintln(Err))
+        }</span>
+
+        // Following variable stores the Id of the last inserted document plus one.
+        <span class="cov8" title="1">generatedCoinID := lastID + 1
+        
+        newCoin := &amp;Coin {
+                ID: generatedCoinID,
+                Name: req.Name,
+                Short: req.Short,
+                Votes: 0,
+        }
+
+        // validate existence of both name and short 
+        Validate = validator.New()
+        
+        if validationErr := Validate.Struct(newCoin);  validationErr != nil </span><span class="cov8" title="1">{
+                return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintln(validationErr))
+        }</span>
+        
+        <span class="cov8" title="1">if _, err := MongoCollection.InsertOne(ctx, newCoin); err != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.Internal, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov8" title="1">return &amp;pb.CryptoId{
+                Id: generatedCoinID,
+        }, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package main
+
+import (
+        "fmt"
+        "context"
+
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+        "go.mongodb.org/mongo-driver/bson"
+
+        "github.com/golang/protobuf/ptypes/empty"
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+// DeleteCrypto function receives context and request with crypto id.
+// Returns empty in case of success, error in case of failure.
+func (s *Server) DeleteCrypto(ctx context.Context, req *pb.CryptoId) (*empty.Empty, error) <span class="cov8" title="1">{
+        id := bson.M{"_id": req.Id}
+
+        res, err := MongoCollection.DeleteOne(ctx, id)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintln(err))
+        }</span> else<span class="cov8" title="1"> if res.DeletedCount == 0 </span><span class="cov8" title="1">{
+                return nil, status.Errorf(codes.NotFound, fmt.Sprintln("DeletedCount", res.DeletedCount))
+        }</span>
+
+        <span class="cov0" title="0">return &amp;empty.Empty{}, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package main
+
+import(
+        "fmt"
+        "context"
+
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/mongo/options"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+// DownvoteCrypto receives context and request with crypto id as parameters.
+// Returns CryptoVotes struct containing the updated number of votes.
+func (s *Server) DownvoteCrypto(ctx context.Context, req *pb.CryptoId) (*pb.CryptoVotes, error) <span class="cov8" title="1">{
+        id := bson.M{"_id": req.Id}
+
+        res := MongoCollection.FindOneAndUpdate(
+                ctx, 
+                id, 
+                bson.D { primitive.E { Key: "$inc", Value: bson.D { primitive.E { Key: "votes", Value: -1 } } } }, 
+                options.FindOneAndUpdate().SetReturnDocument(1),
+        )
+
+        coin := &amp;Coin{}
+
+        if err := res.Decode(coin); err != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.NotFound, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov8" title="1">return &amp;pb.CryptoVotes{
+                Votes: coin.Votes,
+        }, nil</span>
+}</pre>
+		
+		<pre class="file" id="file4" style="display: none">package main
+
+import(
+        "fmt"
+        "context"
+
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+        "go.mongodb.org/mongo-driver/bson"
+
+        "github.com/golang/protobuf/ptypes/empty"
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+// ListCryptos receives empty and stream as parameters. Returns a stream with all cryptos found in mongo collection.
+func (s *Server) ListCryptos(no *empty.Empty, stream pb.CryptoService_ListCryptosServer) error <span class="cov8" title="1">{
+        res, err := MongoCollection.Find(context.Background(), bson.D{})
+        if err != nil </span><span class="cov0" title="0">{
+                status.Errorf(codes.Internal, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov8" title="1">defer res.Close(context.Background())
+        
+        coin := &amp;Coin{}
+
+        for res.Next(context.Background()) </span><span class="cov8" title="1">{
+                err := res.Decode(coin)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        status.Errorf(codes.Internal, fmt.Sprintln(err))
+                }</span>
+
+                <span class="cov8" title="1">stream.Send(&amp;pb.Crypto{
+                        Id: coin.ID,
+                        Name: coin.Name,
+                        Short: coin.Short,
+                        Votes: coin.Votes,
+                })</span>
+        }
+
+        <span class="cov8" title="1">if err := res.Err(); err != nil </span><span class="cov0" title="0">{
+                status.Errorf(codes.Internal, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package main
+
+import(
+        "fmt"
+        "context"
+
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+        
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/mongo"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+// LiveCryptoVotes receives a request with id and a stream as parameters;
+// and it streams every update on votes of the specific crypto.
+func (s *Server) LiveCryptoVotes(req *pb.CryptoId, stream pb.CryptoService_LiveCryptoVotesServer) error <span class="cov0" title="0">{
+        if _, err := DoesThisCryptoExist(req.Id); err != nil </span><span class="cov0" title="0">{
+                return status.Errorf(codes.NotFound, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov0" title="0">match := bson.D {
+                primitive.E {
+                        Key: "$match", 
+                        Value: bson.D {
+                                primitive.E { 
+                                        Key: "documentKey",
+                                        Value: bson.D {
+                                                primitive.E {
+                                                Key: "_id", 
+                                                Value: req.Id,
+                                                },
+                                        },        
+                                },
+                        }, 
+                }, 
+        } 
+        
+        watch, err := MongoCollection.Watch(context.TODO(), mongo.Pipeline{match})
+        
+        if err != nil </span><span class="cov0" title="0">{
+                return status.Errorf(codes.NotFound, fmt.Sprintln(err))
+        }</span>
+        
+        <span class="cov0" title="0">defer watch.Close(context.Background())        
+        
+        for watch.Next(context.Background())</span><span class="cov0" title="0">{
+                var data bson.M
+
+                if err := watch.Decode(&amp;data); err != nil </span><span class="cov0" title="0">{
+                        return status.Errorf(codes.Internal, fmt.Sprintln(err))        
+                }</span>
+                
+                <span class="cov0" title="0">votesNumber := FrankensteinGetVotesPls(data)
+                
+                stream.Send(&amp;pb.CryptoVotes{
+                        Votes: votesNumber,
+                })</span>
+        }
+        
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package main
+
+import(
+        "log"
+        "net"
+        "fmt"
+
+        "google.golang.org/grpc"
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+var address string = "0.0.0.0:50051"
+type Server struct {
+        pb.CryptoServiceServer
+}
+
+func main() <span class="cov0" title="0">{
+        listener, err := net.Listen("tcp", address)
+        
+        if err != nil </span><span class="cov0" title="0">{
+                status.Errorf(codes.Internal, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov0" title="0">log.Println("Listening on port", address)
+
+        serverInstance := grpc.NewServer()
+
+        pb.RegisterCryptoServiceServer(serverInstance, &amp;Server{})
+        
+        if err := serverInstance.Serve(listener); err != nil </span><span class="cov0" title="0">{
+                status.Errorf(codes.Internal, fmt.Sprintln(err))
+        }</span>
+}</pre>
+		
+		<pre class="file" id="file7" style="display: none">package main
+
+import(
+        "os"
+        "log"
+        "context"
+
+        "go.mongodb.org/mongo-driver/mongo"
+        "go.mongodb.org/mongo-driver/mongo/options"
+)
+
+func getEnv(key, standard string) string <span class="cov8" title="1">{
+        value, exists := os.LookupEnv(key)
+        if !exists </span><span class="cov0" title="0">{
+                value = standard
+        }</span>
+        <span class="cov8" title="1">return value</span>
+}
+
+func init() <span class="cov8" title="1">{
+        // mclient, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("CLOUD_CONNECTION_STRING")))
+        mclient, err := mongo.NewClient(options.Client().ApplyURI(getEnv("CLOUD_CONNECTION_STRING", "mongodb://root:root@localhost:27017/")))
+        
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+        }</span>
+        
+        <span class="cov8" title="1">err = mclient.Connect(context.Background())
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+        }</span>
+        
+        <span class="cov8" title="1">MongoCollection = mclient.Database("cryptodb").Collection("crypto")
+
+        log.Println("MongoDB ready.")</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package main
+
+import(
+        "context"
+        "fmt"
+
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+        
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+// ReadCrypto function receives context and request with id as parameters, return a crypto if it exists and an error.
+func (s *Server) ReadCrypto(ctx context.Context, req *pb.CryptoId) (*pb.Crypto, error) <span class="cov8" title="1">{
+        coin, err := DoesThisCryptoExist(req.Id)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.NotFound, fmt.Sprintln(err))
+        }</span>
+        
+        <span class="cov8" title="1">return &amp;pb.Crypto{
+                Id: coin.ID,
+                Name: coin.Name,
+                Short: coin.Short,
+                Votes: coin.Votes,
+        }, nil</span>
+}</pre>
+		
+		<pre class="file" id="file9" style="display: none">package main
+
+import(
+        "fmt"
+        "context"
+
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+        
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/mongo/options"
+
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+// UpdateCrypto function receives a context and request with Crypto struct as parameters,
+// update the coin in the database and returns its id and error.
+func (s *Server) UpdateCrypto(ctx context.Context, req *pb.Crypto) (*pb.CryptoId, error) <span class="cov8" title="1">{
+        if err := ValidateCoin(req);        err != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov8" title="1">cid := bson.M{"_id": req.Id}
+
+        updateTo := bson.M{
+                "name": req.Name,
+                "short": req.Short,
+                "votes": req.Votes,
+        }
+
+        res := MongoCollection.FindOneAndUpdate(
+                ctx, 
+                cid, bson.M{"$set": updateTo}, 
+                options.FindOneAndUpdate().SetReturnDocument(1),
+        )
+
+        coin := &amp;Coin{}
+
+        if err := res.Decode(coin); err != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.NotFound, fmt.Sprintf("No coin with specified Id. %v", err))
+        }</span>
+
+        <span class="cov8" title="1">return &amp;pb.CryptoId{
+                Id: coin.ID,
+        }, nil</span>
+}</pre>
+		
+		<pre class="file" id="file10" style="display: none">package main
+
+import(
+        "fmt"
+        "context"
+
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/mongo/options"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+
+        pb "github.com/lucassauro/klever-challenge/src/proto"
+)
+
+// UpvoteCrypto receives context and request with crypto id as parameters.
+// Returns CryptoVotes struct containing the updated number of votes.
+func (s *Server) UpvoteCrypto(ctx context.Context, req *pb.CryptoId) (*pb.CryptoVotes, error) <span class="cov8" title="1">{
+        id := bson.M{"_id": req.Id}
+
+        res := MongoCollection.FindOneAndUpdate(
+                ctx, 
+                id, 
+                bson.D { primitive.E { Key: "$inc", Value: bson.D { primitive.E { Key: "votes", Value: 1 } } } }, 
+                options.FindOneAndUpdate().SetReturnDocument(1),
+        )
+
+        coin := &amp;Coin{}
+
+        if err := res.Decode(coin); err != nil </span><span class="cov0" title="0">{
+                return nil, status.Errorf(codes.NotFound, fmt.Sprintln(err))
+        }</span>
+
+        <span class="cov8" title="1">return &amp;pb.CryptoVotes{
+                Votes: coin.Votes,
+        }, nil</span>
+}</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

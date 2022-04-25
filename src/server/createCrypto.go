@@ -33,14 +33,11 @@ func (s *Server) CreateCrypto(ctx context.Context, req *pb.NewCrypto) (*pb.Crypt
 	// validate existence of both name and short 
 	Validate = validator.New()
 	
-	validationErr := Validate.Struct(newCoin)
-	
-	if validationErr != nil {
+	if validationErr := Validate.Struct(newCoin);  validationErr != nil {
 		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintln(validationErr))
 	}
 	
-	_, err := MongoCollection.InsertOne(ctx, newCoin)
-	if err != nil {
+	if _, err := MongoCollection.InsertOne(ctx, newCoin); err != nil {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintln(err))
 	}
 
