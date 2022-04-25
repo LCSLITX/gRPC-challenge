@@ -9,6 +9,7 @@ import(
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+
 func init() {
 	mclient, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("CLOUD_CONNECTION_STRING")))
 	
