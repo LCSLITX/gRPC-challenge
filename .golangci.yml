@@ -1,0 +1,31 @@
+linters:
+  enable-all: true
+  disable:
+    - gofumpt
+    - gofmt
+    - forcetypeassert
+    - goimports
+    - exhaustivestruct
+    - revive
+    - gochecknoglobals
+    - gochecknoinits
+    - wrapcheck
+    - gosec
+    - errorlint
+    - deadcode
+    - gci
+    - errcheck
+  # presets:
+  #   - bugs
+  #   - comment
+  #   - complexity
+  #   - error
+  #   - format
+  #   - import
+  #   - metalinter
+  #   - module
+  #   - performance
+  #   - sql
+  #   - style
+  #   - test
+  #   - unused
