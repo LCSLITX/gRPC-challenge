@@ -31,12 +31,13 @@ func Test_ReadCrypto(t *testing.T) {
 
 	defer mt.Close()
 
-	res, _ := client.CreateCrypto(ctx, &pb.NewCrypto{
-		Name: "Testo",
-		Short: "TVT",
-	})
-
+	
 	mt.Run("Success", func(mt *mtest.T) {
+		res, _ := client.CreateCrypto(ctx, &pb.NewCrypto{
+			Name: "TestReadCrypto",
+			Short: "TVT",
+		})
+
 		mt.AddMockResponses(bson.D{
 			primitive.E	{ Key: "ok", Value: 1 },
 			primitive.E {

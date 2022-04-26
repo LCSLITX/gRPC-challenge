@@ -31,12 +31,13 @@ func Test_UpvoteCrypto(t *testing.T) {
 
 	defer mt.Close()
 
-	res, _ := client.CreateCrypto(ctx, &pb.NewCrypto{
-		Name: "Teste",
-		Short: "TST",
-	})
-
+	
 	mt.Run("Success", func(mt *mtest.T) {
+		res, _ := client.CreateCrypto(ctx, &pb.NewCrypto{
+			Name: "TestUpvoteCrypto",
+			Short: "TST",
+		})
+
 		mt.AddMockResponses(bson.D{
 			primitive.E	{ Key: "ok", Value: 1 },
 			primitive.E {

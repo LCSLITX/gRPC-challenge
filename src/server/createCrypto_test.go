@@ -15,7 +15,7 @@ import (
 	pb "github.com/lucassauro/klever-challenge/src/proto"
 )
 
-func TestCreateCrypto(t *testing.T) {
+func Test_CreateCrypto(t *testing.T) {
 	ctx := context.Background()
 	credentials := grpc.WithTransportCredentials(insecure.NewCredentials())
 	connection, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(bufDialer), credentials)
@@ -39,7 +39,7 @@ func TestCreateCrypto(t *testing.T) {
 		if _, err := client.CreateCrypto(
 			ctx, 
 			&pb.NewCrypto{
-				Name: "Tests",
+				Name: "TestCreateCrypto",
 				Short: "Tst",
 			}); err != nil {
 				t.Errorf("Error: %v", err)
@@ -47,7 +47,7 @@ func TestCreateCrypto(t *testing.T) {
 	})
 }
 
-func TestErrorCreateCrypto(t *testing.T) {
+func Test_Error_CreateCrypto(t *testing.T) {
 	ctx := context.Background()
 	credentials := grpc.WithTransportCredentials(insecure.NewCredentials())
 	connection, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(bufDialer), credentials)

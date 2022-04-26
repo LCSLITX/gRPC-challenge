@@ -32,12 +32,13 @@ func Test_listCrypto(t *testing.T) {
 
 	defer mt.Close()
 
-	client.CreateCrypto(ctx, &pb.NewCrypto{
-		Name: "Teste",
-		Short: "TST",
-	})
-
+	
 	mt.Run("Success", func(mt *mtest.T) {
+		client.CreateCrypto(ctx, &pb.NewCrypto{
+			Name: "TesteListCryptos",
+			Short: "TST",
+		})
+
 		first := mtest.CreateCursorResponse(
 			1,
 			"cryptodb.crypto",

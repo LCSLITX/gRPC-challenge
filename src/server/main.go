@@ -24,7 +24,7 @@ func main() {
 		status.Errorf(codes.Internal, fmt.Sprintln(err))
 	}
 
-	log.Println("Listening on port", address)
+	log.Println("gRPC Server ready. Listening to:", address)
 
 	serverInstance := grpc.NewServer()
 

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"context"
-	"errors"
 	"fmt"
 	"log"
+	"errors"
+	"context"
 
 	"github.com/subosito/gotenv"
 
@@ -27,6 +27,8 @@ var MongoCollection *mongo.Collection
 // Validate inicialization.
 var Validate *validator.Validate
 
+// The following function doesn't allowed Go compiler to build a binary file in an environment without a .env file.
+// So, the solution was simply comment the code that tries to access .env variables.
 // gotenv inicialization.
 func init() {
 	if err := gotenv.Load(); err != nil {
