@@ -102,8 +102,8 @@ In addition to these essential requirements:
 
   The API implements the CRUD interfaces.
         
-- [X] The API must have a method that stream a live update of the current sum of the votes from a given Cryptocurrency
+- [X] The API must have a method that stream a live update of the current sum of the votes from a given Cryptocurrency.
         
-  The API implements LiveCryptoVotes, which is responsible to stream every vote related to a specific coin.
+  The API implements LiveCryptoVotes, which is responsible to stream every vote related to a specific coin. It is not available if running database on Docker because mongo.Watch(), or $changestream stage is only supported on replica sets. Available if running database on cloud.
 
         
