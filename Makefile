@@ -19,7 +19,7 @@ buildRunServer:
 	
 # build client
 buildRunClient:
-	go build -o ./bin/ ./src/client && ./bin/client
+	go build -o ./bin/ ./client && ./bin/client
 
 # tests
 tests:

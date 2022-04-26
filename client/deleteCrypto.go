@@ -11,8 +11,10 @@ func deleteCrypto(client pb.CryptoServiceClient, id uint32) uint32 {
 	if _, err := client.DeleteCrypto(context.Background(), &pb.CryptoId{
 		Id: id,
 	}); err != nil {
-		log.Fatalf("Error")
+		log.Fatalln(err)
 	}
-	
+
+	log.Println(id)
+
 	return id
 }

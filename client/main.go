@@ -22,6 +22,9 @@ func main() {
 
 	client := pb.NewCryptoServiceClient(conn)
 
-	createCrypto(client)
-	deleteCrypto(client, 1)
+	identifier := createCrypto(client)
+	updateCrypto(client, identifier)
+	readCrypto(client, identifier)
+	listCryptos(client)
+	deleteCrypto(client, identifier)
 }

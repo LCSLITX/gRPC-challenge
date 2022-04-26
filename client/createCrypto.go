@@ -16,8 +16,10 @@ func createCrypto(client pb.CryptoServiceClient) uint32 {
 	res, err := client.CreateCrypto(context.Background(), data)
 
 	if err != nil {
-		log.Fatalf("Error")
+		log.Fatalln(err)
 	}
+	
+	log.Println(res.Id)
 
 	return res.Id
 }
