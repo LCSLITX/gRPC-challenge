@@ -1,6 +1,7 @@
 # klever-challenge
 The Technical Challenge consists of creating an API with Golang using gRPC with stream pipes that exposes an Upvote service endpoints. The API will provide the user an interface to upvote or downvote a known list of the main Cryptocurrencies (Bitcoin, ethereum, litecoin, etc..).
 
+
 Technical requirements:
 - Keep the code in Github
 
@@ -106,4 +107,8 @@ In addition to these essential requirements:
         
   The API implements LiveCryptoVotes, which is responsible to stream every vote related to a specific coin. It is not available if running database on Docker because mongo.Watch(), or $changestream stage is only supported on replica sets. Available if running database on cloud.
 
+        
+        
+        
+        
         
