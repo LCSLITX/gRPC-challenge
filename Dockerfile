@@ -4,5 +4,5 @@ RUN apk add --update make
 WORKDIR $GOPATH/src/github.com/lucassauro/klever-challenge/
 COPY . .
 RUN go mod tidy
-RUN make build 
+RUN go build -o ./bin/ ./src/server
 ENTRYPOINT [ "./bin/server" ]
