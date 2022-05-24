@@ -48,21 +48,28 @@ https://github.com/lucassauro/klever-challenge.git
 ```
 
 
+Important: LiveCryptoVotes method is available only if running on cloud database.
+
+
 After that, there are a few ways to execute the project;
 
 #### Building a Go binary (easiest and faster):
 1. Change to its directory and simply execute the command `make buildRunServer` to build and run it.
 2. It'll be available to test it with Insonmnia, Postman or BloomRPC. The application is already connected with a cloud database.
+3. For a simpler test, you could execute make buildRunClient, to execute Client. Or you could import Insomnia-Klever.json file in your Insomnia or manually add `.proto` files in any request software with gRPC compatibility and add the address 'localhost:50051'.
 
 
 #### Within a container:
 1. Change to its directory and execute the command `make runDockerServer` to build and run it inside a container.
 2. It'll be available to test it with Insonmnia, Postman or BloomRPC. The application is already connected with a cloud database.
-
+3. For a simpler test, you could execute make buildRunClient, to execute Client. Or you could import Insomnia-Klever.json file in your Insomnia or manually add `.proto` files in any request software with gRPC compatibility and add the address 'localhost:50051'.
 
 #### With a set of containers, together with mongo and mongo-express:
 1. Change to its directory and execute the command `docker-compose up` to build inside a container.
 2. It'll be available to test it with Insonmnia, Postman or BloomRPC. The application is already connected with a cloud database.
+3. For a simpler test, you could execute make buildRunClient, to execute Client. Or you could import Insomnia-Klever.json file in your Insomnia or manually add `.proto` files in any request software with gRPC compatibility and add the address 'localhost:50051'.
+
+
 
 
 #### Ports
@@ -74,11 +81,24 @@ The Mongo-Express is configured to be accessible through the browser at URL `loc
 
 
 
+
 #### Requests
+
+Important: To run with local database, you should comment the CLOUD_CONNECTION in .env file or simply add a new variable as this `TEST=""`. And after that, execute docker-compose up command. With that, the server will start connected to a local containered MongoDB database running on port 27017.
+
+You could use command `docker container ls` to check Up containers.
 
 To create requests and use the application, it is recommended to use Insomnia. 
 
-There is an exportation .JSON file in the root of this repository. It could be used to import request collection.
+You could also run `make buildRunClient`, to execute the Client files.
+
+There is an exportation .JSON file in the root of this repository. It could be used to import request collection. It is already configured with .proto file and request URL.
+
+
+
+#### Tests
+
+There are unit tests for almost every method created, with exception for liveCryptoVotes method. To run tests you could use the command `make tests` in root directory, or `go test` command, inside `klever-challenge/src/server/` directory, where the server files are located.
 
 
 ### Requirements explanation
