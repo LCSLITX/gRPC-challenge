@@ -19,7 +19,7 @@ func (s *Server) CreateCrypto(ctx context.Context, req *pb.NewCrypto) (*pb.Crypt
 	if Err != nil {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintln(Err))
 	}
-
+  // commit teste
 	// Following variable stores the Id of the last inserted document plus one.
 	generatedCoinID := lastID + 1
 	
