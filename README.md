@@ -1,4 +1,4 @@
-# klever-challenge
+# gRPC-challenge
 The Technical Challenge consists of creating an API with Golang using gRPC with stream pipes that exposes an Upvote service endpoints. The API will provide the user an interface to upvote or downvote a known list of the main Cryptocurrencies (Bitcoin, ethereum, litecoin, etc..).
 
 
@@ -42,9 +42,7 @@ Extra:
 #### Clone this repository
  ```sh
 # ssh
-git@github.com:lucassauro/klever-challenge.git
-# https
-https://github.com/lucassauro/klever-challenge.git
+git@github.com:LCSLITX/gRPC-challenge.git
 ```
 
 
@@ -56,18 +54,18 @@ After that, there are a few ways to execute the project;
 #### Building a Go binary (easiest and faster):
 1. Change to its directory and simply execute the command `make buildRunServer` to build and run it.
 2. It'll be available to test it with Insonmnia, Postman or BloomRPC. The application is already connected with a cloud database.
-3. For a simpler test, you could execute make buildRunClient, to execute Client. Or you could import Insomnia-Klever.json file in your Insomnia or manually add `.proto` files in any request software with gRPC compatibility and add the address 'localhost:50051'.
+3. For a simpler test, you could execute make buildRunClient, to execute Client. Or you could import Insomnia.json file in your Insomnia or manually add `.proto` files in any request software with gRPC compatibility and add the address 'localhost:50051'.
 
 
 #### Within a container:
 1. Change to its directory and execute the command `make runDockerServer` to build and run it inside a container.
 2. It'll be available to test it with Insonmnia, Postman or BloomRPC. The application is already connected with a cloud database.
-3. For a simpler test, you could execute make buildRunClient, to execute Client. Or you could import Insomnia-Klever.json file in your Insomnia or manually add `.proto` files in any request software with gRPC compatibility and add the address 'localhost:50051'.
+3. For a simpler test, you could execute make buildRunClient, to execute Client. Or you could import Insomnia.json file in your Insomnia or manually add `.proto` files in any request software with gRPC compatibility and add the address 'localhost:50051'.
 
 #### With a set of containers, together with mongo and mongo-express:
 1. Change to its directory and execute the command `docker-compose up` to build inside a container.
 2. It'll be available to test it with Insonmnia, Postman or BloomRPC. The application is already connected with a cloud database.
-3. For a simpler test, you could execute make buildRunClient, to execute Client. Or you could import Insomnia-Klever.json file in your Insomnia or manually add `.proto` files in any request software with gRPC compatibility and add the address 'localhost:50051'.
+3. For a simpler test, you could execute make buildRunClient, to execute Client. Or you could import Insomnia.json file in your Insomnia or manually add `.proto` files in any request software with gRPC compatibility and add the address 'localhost:50051'.
 
 
 
@@ -98,7 +96,7 @@ There is an exportation .JSON file in the root of this repository. It could be u
 
 #### Tests
 
-There are unit tests for almost every method created, with exception for liveCryptoVotes method. To run tests you could use the command `make tests` in root directory, or `go test` command, inside `klever-challenge/src/server/` directory, where the server files are located.
+There are unit tests for almost every method created, with exception for liveCryptoVotes method. To run tests you could use the command `make tests` in root directory, or `go test` command, inside `gRPC-challenge/src/server/` directory, where the server files are located.
 
 
 ### Requirements explanation
